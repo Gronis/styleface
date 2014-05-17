@@ -7,7 +7,7 @@ static int time_num;
 static char *string;
 
 void init_app(void){
-	time_num = 2000;
+	time_num = 0;
 	string = malloc(sizeof(char) * 20);
 }
 
