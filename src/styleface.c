@@ -1,25 +1,8 @@
 #include <pebble.h>
+#include "app.h"
 
-static Window *window;
-static TextLayer *text_layer;
-
-static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Select");
-}
-
-static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Up");
-}
-
-static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
-  text_layer_set_text(text_layer, "Down");
-}
-
-static void click_config_provider(void *context) {
-  window_single_click_subscribe(BUTTON_ID_SELECT, select_click_handler);
-  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
-  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
-}
+Window *window;
+TextLayer *text_layer;
 
 static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
@@ -37,13 +20,19 @@ static void window_unload(Window *window) {
 
 static void init(void) {
   window = window_create();
-  window_set_click_config_provider(window, click_config_provider);
+  window_set_background_color(window, GColorBlack);
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
   });
+
+  //add callback every seconed
+  tick_timer_service_subscribe(SECOND_UNIT, tick_every_second);
+
   const bool animated = true;
   window_stack_push(window, animated);
+
+  init_app();
 }
 
 static void deinit(void) {
