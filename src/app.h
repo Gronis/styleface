@@ -3,6 +3,9 @@
 #ifndef app_h
 #define app_h
 
+#define SCREEN_WIDTH 144
+#define SCREEN_HEIGHT 168
+
 extern Window *window;
 extern TextLayer *text_layer;
 

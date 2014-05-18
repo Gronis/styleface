@@ -3,19 +3,33 @@
 
 Window *window;
 TextLayer *text_layer;
+InverterLayer *inverter_layer;
+bool invert_colors = false;
 
 static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 20 } });
+  text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 100 } });
   text_layer_set_text(text_layer, "Press a button");
+  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
   text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  text_layer_set_background_color(text_layer, GColorBlack);
+  text_layer_set_text_color(text_layer, GColorClear);
+
+  inverter_layer = inverter_layer_create(GRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+
+  // add layers to window layer
   layer_add_child(window_layer, text_layer_get_layer(text_layer));
+  //invert all colors
+  if(invert_colors){
+    layer_add_child(window_layer, (Layer*) inverter_layer);
+  }
 }
 
 static void window_unload(Window *window) {
   text_layer_destroy(text_layer);
+  inverter_layer_destroy(inverter_layer);
 }
 
 static void init(void) {
