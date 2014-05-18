@@ -12,9 +12,16 @@ void init_app(void){
 }
 
 void tick_every_second(struct tm *tick_time, TimeUnits units_changed){
-	strcpy(string, "Hej ");
-	strcat(string, itoa(time_num++));
-	//sprintf(string, "%d", time_num++);
+	print_time(tick_time->tm_hour, tick_time->tm_min, tick_time->tm_sec);
+}
+
+void print_time(int hour, int min, int sec){
+	strcpy(string, hour >= 10 ? "" : "0");
+	strcat(string, itoa(hour));
+	strcat(string, min >= 10 ? ":" : ":0");
+	strcat(string, itoa(min));
+	strcat(string, sec >= 10 ? ":" : ":0");
+	strcat(string, itoa(sec));
 	text_layer_set_text(text_layer, string);
 }
 
