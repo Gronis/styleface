@@ -8,6 +8,9 @@
 
 extern Window *window;
 extern TextLayer *text_layer;
+extern Layer *second_display_layer;
+extern Layer *minute_display_layer;
+extern Layer *hour_display_layer;
 
 void init_app(void);
 
