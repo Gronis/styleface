@@ -1,7 +1,7 @@
 {
   "uuid": "91f74ae3-7fc0-4812-85cc-82995170ac0b",
-  "shortName": "styleface",
-  "longName": "styleface",
+  "shortName": "Styleface",
+  "longName": "Styleface",
   "companyName": "MakeAwesomeHappen",
   "versionCode": 1,
   "versionLabel": "1.0.0",
@@ -12,6 +12,13 @@
     "dummy": 0
   },
   "resources": {
-    "media": []
+    "media": [
+      {
+        "menuIcon": true,
+        "type": "png",
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/menu_icon_sector_watch.png"
+      }
+    ]
   }
 }
