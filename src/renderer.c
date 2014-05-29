@@ -1,8 +1,14 @@
 #include "renderer.h"
 
-// draws a circle that exists of dots
-
-//progress, a value from 0 to 59 depending how many dots to draw
+/** 
+	Draws a circle that exists of dots
+	
+	circle_radius: Radius of the whole circle
+	max_num_of_dots: how many dots there should be in the whole circle
+	dot_radius: how big each individual dot should be
+	progress: a value from 0 to max_progress. Determines how many dots to draw. 
+	max_progress: When equals to progress, all dots are rendered
+ */
 void render_circle_with_dots(Layer *layer, GContext* ctx, int circle_radius, int max_num_of_dots, int dot_radius, int progress, int max_progress){
 
 	GRect bounds = layer_get_bounds(layer);
@@ -18,7 +24,7 @@ void render_circle_with_dots(Layer *layer, GContext* ctx, int circle_radius, int
   		int32_t y = -cos_lookup(angle) * circle_radius / TRIG_MAX_RATIO;
   		point.x = center.x + x;
   		point.y = center.y + y;
-  		//last dot
+  		//scale the last dot if needed
   		int scale = max_num_of_dots * progress - i * max_progress; 
   		int size = scale > max_progress? dot_radius: scale < 0? 0: dot_radius * scale / max_progress;
   		if(size > 0) {
@@ -36,7 +42,7 @@ void second_display_layer_update_callback(Layer *layer, GContext* ctx){
 	int circle_radius = 70;
 	int max_num_of_dots = 60;
 	int dot_radius = 2;
-	render_circle_with_dots(layer, ctx, circle_radius, max_num_of_dots, dot_radius, t->tm_sec, 60);
+	render_circle_with_dots(layer, ctx, circle_radius, max_num_of_dots, dot_radius, t->tm_sec == 0? 60 : t->tm_sec, 60);
 }
 
 void minute_display_layer_update_callback(Layer *layer, GContext* ctx){
@@ -48,7 +54,7 @@ void minute_display_layer_update_callback(Layer *layer, GContext* ctx){
 	int circle_radius = 60;
 	int max_num_of_dots = 36;
 	int dot_radius = 4;
-	render_circle_with_dots(layer, ctx, circle_radius, max_num_of_dots, dot_radius, t->tm_min, 60);
+	render_circle_with_dots(layer, ctx, circle_radius, max_num_of_dots, dot_radius, t->tm_min == 0? 60 : t->tm_min, 60);
 }
 
 void hour_display_layer_update_callback(Layer *layer, GContext* ctx){
