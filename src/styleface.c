@@ -1,6 +1,5 @@
 #include <pebble.h>
 #include "renderer.h"
-#include "app.h"
 #include "const.h"
 
 Window *window;
@@ -19,15 +18,6 @@ static void window_load(Window *window) {
   Layer *window_layer = window_get_root_layer(window);
   GRect bounds = layer_get_bounds(window_layer);
 
-  // text_layer
-  text_layer = text_layer_create((GRect) { .origin = { 0, 72 }, .size = { bounds.size.w, 100 } });
-  text_layer_set_text(text_layer, "Press a button");
-  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK));
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  text_layer_set_background_color(text_layer, GColorBlack);
-  text_layer_set_text_color(text_layer, GColorClear);
-  //layer_add_child(window_layer, text_layer_get_layer(text_layer));
-
   // hour_layer
   hour_display_layer = layer_create(bounds);
   layer_set_update_proc(hour_display_layer, hour_display_layer_update_callback); 
@@ -42,6 +32,15 @@ static void window_load(Window *window) {
   second_display_layer = layer_create(bounds);
   layer_set_update_proc(second_display_layer, second_display_layer_update_callback); 
   layer_add_child(window_layer, second_display_layer);
+
+  // text_layer
+  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w / 2 - 30, bounds.size.h / 2 + 20}, .size = { 60, 20 } });
+  text_layer_set_text(text_layer, "Press a button");
+  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
+  text_layer_set_background_color(text_layer, GColorBlack);
+  text_layer_set_text_color(text_layer, GColorClear);
+  layer_add_child(window_layer, text_layer_get_layer(text_layer));
 
   // Init the hour segment path
   hour_divider_segment_path = gpath_create(&HOUR_DIVIDER_SEGMENT_PATH_POINTS);

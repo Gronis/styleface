@@ -1,4 +1,8 @@
 #include "renderer.h"
+#include "stdio.h"
+#include "const.h"
+
+static char *string;
 
 /** 
 	Draws a circle that exists of dots
@@ -54,7 +58,7 @@ void minute_display_layer_update_callback(Layer *layer, GContext* ctx){
 	int circle_radius = 60;
 	int max_num_of_dots = 36;
 	int dot_radius = 4;
-	render_circle_with_dots(layer, ctx, circle_radius, max_num_of_dots, dot_radius, t->tm_min == 0? 60 : t->tm_min, 60);
+	render_circle_with_dots(layer, ctx, circle_radius, max_num_of_dots, dot_radius, t->tm_min, 60);
 }
 
 void hour_display_layer_update_callback(Layer *layer, GContext* ctx){
@@ -80,7 +84,7 @@ void hour_display_layer_update_callback(Layer *layer, GContext* ctx){
   		gpath_draw_filled(ctx, hour_divider_segment_path);
   	}
 
-	for(int i = t->tm_hour % 12; i < 12; i++){
+	for(int i = t->tm_hour % 12 == 0? 12 : t->tm_hour % 12; i < 12; i++){
   		gpath_rotate_to(hour_segment_path, (TRIG_MAX_ANGLE / 360) * i * 30);
   		gpath_draw_filled(ctx, hour_segment_path);
   	}
@@ -88,4 +92,29 @@ void hour_display_layer_update_callback(Layer *layer, GContext* ctx){
 
   	graphics_fill_circle(ctx, center, 41);
 
+}
+
+void tick_every_second(struct tm *tick_time, TimeUnits units_changed){
+	layer_mark_dirty(second_display_layer);
+	if(tick_time->tm_hour == 0){
+		update_day(tick_time);
+	}
+}
+
+void update_day(struct tm *tick_time){
+	strcpy(string, WEEKDAYS[tick_time->tm_wday]);
+	strcat(string, itoa(tick_time->tm_mday));
+	text_layer_set_text(text_layer, string);
+}
+
+void init_app(void){
+	string = malloc(sizeof(char) * 20);
+
+	//Call time at the beginning
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+ 
+	//Manually call the tick handler to refresh GUI
+	tick_every_second(t, SECOND_UNIT);
+	update_day(t);
 }
