@@ -3,7 +3,8 @@
 #include "const.h"
 
 Window *window;
-TextLayer *text_layer;
+TextLayer *day_text_layer;
+TextLayer *battery_text_layer;
 InverterLayer *inverter_layer;
 Layer *second_display_layer;
 Layer *minute_display_layer;
@@ -33,14 +34,21 @@ static void window_load(Window *window) {
   layer_set_update_proc(second_display_layer, second_display_layer_update_callback); 
   layer_add_child(window_layer, second_display_layer);
 
-  // text_layer
-  text_layer = text_layer_create((GRect) { .origin = { bounds.size.w / 2 - 30, bounds.size.h / 2 + 20}, .size = { 60, 20 } });
-  text_layer_set_text(text_layer, "Press a button");
-  text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-  text_layer_set_text_alignment(text_layer, GTextAlignmentCenter);
-  text_layer_set_background_color(text_layer, GColorBlack);
-  text_layer_set_text_color(text_layer, GColorClear);
-  layer_add_child(window_layer, text_layer_get_layer(text_layer));
+  // day_text_layer
+  day_text_layer = text_layer_create((GRect) { .origin = { bounds.size.w / 2 - 30, bounds.size.h / 2 + 20}, .size = { 60, 20 } });
+  text_layer_set_font(day_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text_alignment(day_text_layer, GTextAlignmentCenter);
+  text_layer_set_background_color(day_text_layer, GColorBlack);
+  text_layer_set_text_color(day_text_layer, GColorClear);
+  layer_add_child(window_layer, text_layer_get_layer(day_text_layer));
+
+  // battery_text_layer
+  battery_text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 30, 0}, .size = { 30, 18 } });
+  text_layer_set_font(battery_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+  text_layer_set_text_alignment(battery_text_layer, GTextAlignmentCenter);
+  text_layer_set_background_color(battery_text_layer, GColorBlack);
+  text_layer_set_text_color(battery_text_layer, GColorClear);
+  layer_add_child(window_layer, text_layer_get_layer(battery_text_layer));
 
   // Init the hour segment path
   hour_divider_segment_path = gpath_create(&HOUR_DIVIDER_SEGMENT_PATH_POINTS);
@@ -57,11 +65,13 @@ static void window_load(Window *window) {
 }
 
 static void window_unload(Window *window) {
-  text_layer_destroy(text_layer);
+  text_layer_destroy(day_text_layer);
   inverter_layer_destroy(inverter_layer);
   layer_destroy(second_display_layer);
   layer_destroy(minute_display_layer);
   layer_destroy(hour_display_layer);
+  gpath_destroy(hour_divider_segment_path);
+  gpath_destroy(hour_segment_path);
 }
 
 static void init(void) {
@@ -83,6 +93,7 @@ static void init(void) {
 
 static void deinit(void) {
   window_destroy(window);
+  deinit_app();
 }
 
 int main(void) {

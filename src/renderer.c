@@ -2,7 +2,8 @@
 #include "stdio.h"
 #include "const.h"
 
-static char *string;
+static char *day_string;
+static char *battery_string;
 
 /** 
 	Draws a circle that exists of dots
@@ -96,19 +97,26 @@ void hour_display_layer_update_callback(Layer *layer, GContext* ctx){
 
 void tick_every_second(struct tm *tick_time, TimeUnits units_changed){
 	layer_mark_dirty(second_display_layer);
-	if(tick_time->tm_hour == 0){
-		update_day(tick_time);
-	}
+	update_day(tick_time);
+	update_battery();
 }
 
 void update_day(struct tm *tick_time){
-	strcpy(string, WEEKDAYS[tick_time->tm_wday]);
-	strcat(string, itoa(tick_time->tm_mday));
-	text_layer_set_text(text_layer, string);
+	strcpy(day_string, WEEKDAYS[tick_time->tm_wday]);
+	strcat(day_string, itoa(tick_time->tm_mday));
+	text_layer_set_text(day_text_layer, day_string);
+}
+
+void update_battery(void){
+	int battery = battery_state_service_peek().charge_percent;
+	strcpy(battery_string, itoa(battery));
+	strcat(battery_string, "%");
+	text_layer_set_text(battery_text_layer, battery_string);
 }
 
 void init_app(void){
-	string = malloc(sizeof(char) * 20);
+	day_string = malloc(sizeof(char) * 8);
+	battery_string = malloc(sizeof(char) * 8);
 
 	//Call time at the beginning
 	time_t now = time(NULL);
@@ -116,5 +124,9 @@ void init_app(void){
  
 	//Manually call the tick handler to refresh GUI
 	tick_every_second(t, SECOND_UNIT);
-	update_day(t);
+}
+
+void deinit_app(void){
+	free(day_string);
+	free(battery_string);
 }
