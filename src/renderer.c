@@ -1,30 +1,42 @@
 #include "renderer.h"
 
+// draws a circle that exists of dots
 
-
-void second_display_layer_update_callback(Layer *layer, GContext* ctx){
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "rendering second layer");
-
-	time_t now = time(NULL);
-	struct tm *t = localtime(&now);
-	int32_t radius = 70;
+//progress, a value from 0 to 59 depending how many dots to draw
+void render_circle_with_dots(Layer *layer, GContext* ctx, int circle_radius, int max_num_of_dots, int dot_radius, int progress, int max_progress){
 
 	GRect bounds = layer_get_bounds(layer);
   	GPoint center = grect_center_point(&bounds);
   	GPoint point;
 
   	graphics_context_set_fill_color(ctx, GColorWhite);
-
-  	for(int i = 0; i <= t->tm_sec; i++){
-  		int32_t angle = TRIG_MAX_ANGLE * i / 60 + TRIG_MAX_ANGLE / 120;
-  		int32_t x = sin_lookup(angle) * radius / TRIG_MAX_RATIO;
-  		int32_t y = -cos_lookup(angle) * radius / TRIG_MAX_RATIO;
+  	int num_of_dots = max_num_of_dots * progress / max_progress;
+  	
+  	for(int i = 0; i <= num_of_dots; i++){
+  		int32_t angle = TRIG_MAX_ANGLE * i / max_num_of_dots + TRIG_MAX_ANGLE / (max_num_of_dots * 2);
+  		int32_t x = sin_lookup(angle) * circle_radius / TRIG_MAX_RATIO;
+  		int32_t y = -cos_lookup(angle) * circle_radius / TRIG_MAX_RATIO;
   		point.x = center.x + x;
   		point.y = center.y + y;
-
-  		graphics_fill_circle(ctx, point, 2);
+  		//last dot
+  		int scale = max_num_of_dots * progress - i * max_progress; 
+  		int size = scale > max_progress? dot_radius: scale < 0? 0: dot_radius * scale / max_progress;
+  		if(size > 0) {
+  			graphics_fill_circle(ctx, point, size);
+  		}
   	}
+}
 
+void second_display_layer_update_callback(Layer *layer, GContext* ctx){
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "rendering second layer");
+
+	time_t now = time(NULL);
+	struct tm *t = localtime(&now);
+
+	int circle_radius = 70;
+	int max_num_of_dots = 60;
+	int dot_radius = 2;
+	render_circle_with_dots(layer, ctx, circle_radius, max_num_of_dots, dot_radius, t->tm_sec, 60);
 }
 
 void minute_display_layer_update_callback(Layer *layer, GContext* ctx){
@@ -32,24 +44,11 @@ void minute_display_layer_update_callback(Layer *layer, GContext* ctx){
 
 	time_t now = time(NULL);
 	struct tm *t = localtime(&now);
-	int32_t radius = 60;
 
-	GRect bounds = layer_get_bounds(layer);
-  	GPoint center = grect_center_point(&bounds);
-  	GPoint point;
-
-  	graphics_context_set_fill_color(ctx, GColorWhite);
-
-  	for(int i = 0; i < 36 * t->tm_min / 60 ; i++){
-  		int32_t angle = TRIG_MAX_ANGLE * i / 36 + TRIG_MAX_ANGLE / 72;
-  		int32_t x = sin_lookup(angle) * radius / TRIG_MAX_RATIO;
-  		int32_t y = -cos_lookup(angle) * radius / TRIG_MAX_RATIO;
-  		point.x = center.x + x;
-  		point.y = center.y + y;
-
-  		graphics_fill_circle(ctx, point, 4);
-  	}
-
+	int circle_radius = 60;
+	int max_num_of_dots = 36;
+	int dot_radius = 4;
+	render_circle_with_dots(layer, ctx, circle_radius, max_num_of_dots, dot_radius, t->tm_min, 60);
 }
 
 void hour_display_layer_update_callback(Layer *layer, GContext* ctx){
