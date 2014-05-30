@@ -35,7 +35,7 @@ static void window_load(Window *window) {
   layer_add_child(window_layer, second_display_layer);
 
   // day_text_layer
-  day_text_layer = text_layer_create((GRect) { .origin = { bounds.size.w / 2 - 30, bounds.size.h / 2 + 20}, .size = { 60, 20 } });
+  day_text_layer = text_layer_create((GRect) { .origin = { bounds.size.w / 2 - 20, bounds.size.h / 2 + 20}, .size = { 40, 18 } });
   text_layer_set_font(day_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text_alignment(day_text_layer, GTextAlignmentCenter);
   text_layer_set_background_color(day_text_layer, GColorBlack);
@@ -46,8 +46,8 @@ static void window_load(Window *window) {
   battery_text_layer = text_layer_create((GRect) { .origin = { bounds.size.w - 30, 0}, .size = { 30, 18 } });
   text_layer_set_font(battery_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text_alignment(battery_text_layer, GTextAlignmentCenter);
-  text_layer_set_background_color(battery_text_layer, GColorBlack);
-  text_layer_set_text_color(battery_text_layer, GColorClear);
+  text_layer_set_background_color(battery_text_layer, GColorClear);
+  text_layer_set_text_color(battery_text_layer, GColorWhite);
   layer_add_child(window_layer, text_layer_get_layer(battery_text_layer));
 
   // Init the hour segment path
